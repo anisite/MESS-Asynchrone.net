@@ -11,7 +11,7 @@ WITH CONVOI
          WHERE [CA_D_HR_FIN_REQT] IS NULL --Sélectionner seulement les éléments actifs
          ),
      A_TRAITER
-     AS (SELECT TOP 1000 [CA_NM_LIBL_SERV_ASYN]
+     AS (SELECT TOP {0} [CA_NM_LIBL_SERV_ASYN]
          FROM [CONVOI]
          WHERE [CONVOI].[NumeroLigne] = 1 --Prendre uniquement le premier élément de chaque convoi
                AND [CA_D_HR_EXEC_PLAN] < SYSDATETIME() --Prendre ce qui est dû pour être traité
@@ -19,4 +19,4 @@ WITH CONVOI
                AND [CA_NM_LIBL_SERV_ASYN] IS NULL --Uniquement ce qui n'a pas été assigné
          ORDER BY [CA_D_HR_EXEC_PLAN] ASC)
 --Assigner le serveur qui va traiter les requêtes (pour réservation)
-UPDATE [A_TRAITER] SET [CA_NM_LIBL_SERV_ASYN] = 'LOL'
+UPDATE [A_TRAITER] SET [CA_NM_LIBL_SERV_ASYN] = '{1}'
