@@ -1,14 +1,14 @@
 WITH CONVOI
      AS (SELECT [CA_NM_LIBL_SERV_ASYN], [CA_D_HR_EXEC_PLAN], [CA_E_REQT], [CA_C_TYPE_REQT_ASYN],
                 Row_number()
-                  OVER(
+                  OVER( --OVER permet d'ajouter des numéros de lignes sur la partition (équivalent d'un group by)
                     PARTITION BY CASE WHEN[CA_C_MODE_REQT_CONT] = 'AvecConvoi'
                                     THEN [R].[CA_N_IDEN_CONV] -- Numéro applicatif du convoi
-                                    ELSE CONVERT(NVARCHAR(50), [R].[CA_N_IDEN_REQT])
+                                    ELSE CONVERT(NVARCHAR(50), [R].[CA_N_IDEN_REQT]) -- Dans le cas d'un traitement SansConvoi, on utilise le GUID, qui est unique
                                  END
                     ORDER BY[CA_D_INSC_REQT] ) AS NumeroLigne
          FROM   [dbo].[CA1_REQUETE_ASYNCHRONE] R
-         WHERE [CA_D_HR_FIN_REQT] IS NULL 
+         WHERE [CA_D_HR_FIN_REQT] IS NULL --Sélectionner seulement les éléments actifs
          ),
      A_TRAITER
      AS (SELECT TOP {maximumLecture} [CA_NM_LIBL_SERV_ASYN]
