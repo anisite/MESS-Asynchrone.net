@@ -4,7 +4,7 @@ WITH CONVOI
                   OVER( --OVER permet d'ajouter des numéros de lignes sur la partition (équivalent d'un group by)
                     PARTITION BY CASE WHEN[CA_C_MODE_REQT_CONT] = 'AvecConvoi'
                                     THEN [R].[CA_N_IDEN_CONV] -- Numéro applicatif du convoi
-                                    ELSE CONVERT(NVARCHAR(50), [R].[CA_N_IDEN_REQT]) -- Dans le cas d'un traitement SansConvoi, on utilise le GUID, qui est unique
+                                    ELSE convert(varchar(3),ABS(CHECKSUM(NEWID())) % {pourcentageMax}) -- Dans le cas d'un traitement SansConvoi, on utilise le GUID, qui est unique
                                  END
                     ORDER BY[CA_D_INSC_REQT] ) AS NumeroLigne
          FROM   [dbo].[CA1_REQUETE_ASYNCHRONE] R
@@ -18,5 +18,5 @@ WITH CONVOI
                AND ([CA_E_REQT] IN ( 'INSCRIPTION', 'REPRISE' ) 
                OR ( [CA_E_REQT] = 'FIN_ANORMALE' AND [CA_C_TYPE_REQT_ASYN] = 'Continu'))
                AND [CA_NM_LIBL_SERV_ASYN] IS NULL--Uniquement ce qui n'a pas été assigné
-         ORDER BY [CA_D_HR_EXEC_PLAN] ASC)
+         )
 UPDATE [A_TRAITER] SET [CA_NM_LIBL_SERV_ASYN] = '{cleServeur}'
