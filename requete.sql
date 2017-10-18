@@ -4,7 +4,7 @@ WITH CONVOI
                   OVER( --OVER permet d'ajouter des numéros de lignes sur la partition (équivalent d'un group by)
                     PARTITION BY CASE WHEN[CA_C_MODE_REQT_CONT] = 'AvecConvoi'
                                     THEN [R].[CA_N_IDEN_CONV] -- Numéro applicatif du convoi
-                                    ELSE convert(varchar(3),ABS(CHECKSUM(NEWID())) % {pourcentageMax}) -- Dans le cas d'un traitement SansConvoi, on utilise le GUID, qui est unique
+                                    ELSE convert(varchar(3),ABS(CHECKSUM(NEWID())) % {pourcentageMax}) -- Dans le cas d'un traitement SansConvoi, crée un convoi éphémère
                                  END
                     ORDER BY[CA_D_INSC_REQT] ) AS NumeroLigne
          FROM   [dbo].[CA1_REQUETE_ASYNCHRONE] R
